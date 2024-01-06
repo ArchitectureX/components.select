@@ -14,6 +14,7 @@ type SelectComponentProps = {
   placeholder?: string
   onSelectionChange?: (value: string) => void
   style?: CSSProperties
+  ellipsisLength?: number
 }
 
 const SelectComponent: FC<SelectComponentProps> = ({
@@ -21,7 +22,8 @@ const SelectComponent: FC<SelectComponentProps> = ({
   options,
   placeholder = 'Select option',
   onSelectionChange,
-  style = {}
+  style = {},
+  ellipsisLength = 14
 }) => {
   const findSelectedOption = options.find((option) => option.selected)
   const [isOpen, setIsOpen] = useState(false)
@@ -35,7 +37,7 @@ const SelectComponent: FC<SelectComponentProps> = ({
   const toggleDropdown = () => setIsOpen(!isOpen)
 
   const selectOption = (option: Option) => {
-    const truncatedLabel = truncateText(option.label, 20)
+    const truncatedLabel = truncateText(option.label, ellipsisLength)
 
     setSelectedOption({ ...option, label: truncatedLabel })
     setIsOpen(false)
