@@ -58,47 +58,45 @@ const SelectComponent: FC<SelectComponentProps> = ({
   }, [])
 
   return (
-    <>
+    <div className="relative">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label className="block text-gray-700 text-sm font-bold mb-2 text-left dark:text-gray-300">
           {label}
         </label>
       )}{' '}
-      <div className="relative">
-        <div ref={dropdownRef} className="mt-1">
-          <button
-            className="bg-gray-200 text-gray-700 border border-gray-400 px-4 py-2 rounded-md w-full text-left text-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600" // Dark mode styles
-            onClick={toggleDropdown}
-          >
-            {selectedOption ? selectedOption.label : placeholder}
-          </button>
-          {isOpen && (
-            <div className="absolute bg-white border border-gray-400 mt-1 rounded-md w-full z-10 dark:bg-gray-800 dark:border-gray-600">
-              {' '}
-              <input
-                className="px-4 py-2 w-full text-sm dark:bg-gray-700 dark:text-gray-300"
-                placeholder="Search..."
-                value={filter}
-                onChange={handleFilterChange}
-              />
-              <ul>
-                {filteredOptions.map((option) => (
-                  <li
-                    key={option.value}
-                    className={`px-4 py-2 hover:bg-gray-100 cursor-pointer text-left text-sm dark:hover:bg-gray-600 ${
-                      selectedOption?.value === option.value ? 'bg-gray-300 dark:bg-gray-600' : ''
-                    }`} // Dark mode styles
-                    onClick={() => selectOption(option)}
-                  >
-                    {option.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+      <div ref={dropdownRef} className="mt-1">
+        <button
+          className="bg-gray-200 text-gray-700 border border-gray-400 px-4 py-2 rounded-md w-full text-left text-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600" // Dark mode styles
+          onClick={toggleDropdown}
+        >
+          {selectedOption ? selectedOption.label : placeholder}
+        </button>
+        {isOpen && (
+          <div className="absolute bg-white border border-gray-400 mt-1 rounded-md w-full z-10 dark:bg-gray-800 dark:border-gray-600">
+            {' '}
+            <input
+              className="px-4 py-2 w-full text-sm dark:bg-gray-700 dark:text-gray-300"
+              placeholder="Search..."
+              value={filter}
+              onChange={handleFilterChange}
+            />
+            <ul>
+              {filteredOptions.map((option) => (
+                <li
+                  key={option.value}
+                  className={`px-4 py-2 hover:bg-gray-100 cursor-pointer text-left text-sm dark:hover:bg-gray-600 ${
+                    selectedOption?.value === option.value ? 'bg-gray-300 dark:bg-gray-600' : ''
+                  }`} // Dark mode styles
+                  onClick={() => selectOption(option)}
+                >
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   )
 }
 
