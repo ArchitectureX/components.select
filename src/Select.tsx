@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, FC } from 'react'
+import React, { useState, useRef, useEffect, FC, CSSProperties } from 'react'
 
 type Option = {
   label: string
@@ -11,13 +11,15 @@ type SelectComponentProps = {
   options: Option[]
   placeholder?: string
   onSelectionChange?: (value: string) => void
+  style?: CSSProperties
 }
 
 const SelectComponent: FC<SelectComponentProps> = ({
   label,
   options,
   placeholder = 'Select option',
-  onSelectionChange
+  onSelectionChange,
+  style = {}
 }) => {
   const findSelectedOption = options.find((option) => option.selected)
   const [isOpen, setIsOpen] = useState(false)
@@ -58,7 +60,7 @@ const SelectComponent: FC<SelectComponentProps> = ({
   }, [])
 
   return (
-    <div className="relative">
+    <div data-component="Select" className="relative" style={style}>
       {label && (
         <label className="block text-gray-700 text-sm font-bold mb-2 text-left dark:text-gray-300">
           {label}
