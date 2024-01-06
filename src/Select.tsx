@@ -68,13 +68,13 @@ const SelectComponent: FC<SelectComponentProps> = ({
       )}{' '}
       <div ref={dropdownRef} className="mt-1">
         <button
-          className="bg-gray-200 text-black border border-gray-300 px-4 p-2 rounded-md w-full text-left text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600" // Dark mode styles
+          className="bg-gray-200 text-black border border-gray-300 px-4 p-2 rounded w-full text-left text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600" // Dark mode styles
           onClick={toggleDropdown}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </button>
         {isOpen && (
-          <div className="absolute bg-white border border-gray-400 mt-1 rounded-md w-full z-10 dark:bg-gray-800 dark:border-gray-600">
+          <div className="absolute bg-white border border-gray-400 mt-1 rounded w-full z-10 dark:bg-gray-800 dark:border-gray-600">
             {' '}
             <input
               className="px-4 py-2 w-full text-sm dark:bg-gray-700 dark:text-gray-300"
