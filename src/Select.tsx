@@ -1,248 +1,91 @@
-import React, { FC, MutableRefObject, ReactElement, useEffect, useRef, useState } from 'react'
-import { styles } from './styles'
+import React, { useState, useRef, useEffect, FC } from 'react'
 
 type Option = {
-  option: string
-  value: any
-  selected: boolean
+  label: string
+  value: string
+  selected?: boolean
 }
 
-type Props = {
-  children?: ReactElement
-  className?: string
-  color?: 'primary' | 'secondary'
-  id?: string
-  label?: string
-  searchLabel?: string
-  name?: string
-  noWrapper?: boolean
-  onClick(e: any): any
-  options?: Option[]
-  style?: any
-  top?: string
-  size?: 'xSmall' | 'small' | 'medium' | 'large' | 'xLarge'
-  searchable?: boolean
+type SelectComponentProps = {
+  options: Option[]
+  placeholder?: string
+  onSelectionChange?: (value: string) => void
 }
 
-let count = -1
-
-const SelectComponent: FC<Props> = ({
-  color = 'primary',
-  label = '',
-  onClick,
-  options = [],
-  size = 'small',
-  searchable = false,
-  searchLabel = 'Start searching here...',
-  ...selectProps
+const SelectComponent: FC<SelectComponentProps> = ({
+  options,
+  placeholder = 'Select option',
+  onSelectionChange
 }) => {
-  const inputReference = useRef<any>(null)
+  const findSelectedOption = options.find((option) => option.selected)
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedOption, setSelectedOption] = useState<Option | null>(findSelectedOption || null)
+  const [filter, setFilter] = useState('')
+  const filteredOptions = options.filter((option) =>
+    option.label.toLowerCase().includes(filter.toLowerCase())
+  )
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const [filteredOptions, setFilteredOptions] = useState<Option[]>(options)
-  const [open, setOpen] = useState(false)
-  const [selectedOption, setValue] = useState({ option: '', value: '' })
-  const node = useRef() as MutableRefObject<HTMLInputElement>
+  const toggleDropdown = () => setIsOpen(!isOpen)
 
-  const selectOption = (option: string, value: string, keepItOpen = false) => {
-    if (option) {
-      setValue({
-        option,
-        value
-      })
+  const selectOption = (option: Option) => {
+    setSelectedOption(option)
+    setIsOpen(false)
 
-      onClick({ option, value })
-
-      if (!keepItOpen && open) {
-        setOpen(false)
-      }
-    }
-  }
-  const handleKeyDown = (e: any) => {
-    const key = e.key.toLowerCase()
-    const isKeyUp = key === 'arrowup'
-    const isKeyDown = key === 'arrowdown'
-    const isEnter = key === 'enter'
-    const isArrowKey = isKeyUp || isKeyDown
-
-    if (isEnter) {
-      setOpen(false)
-    }
-
-    if (filteredOptions.length > 0) {
-      let optionIndex = filteredOptions.findIndex((option) =>
-        option.option.toLowerCase().startsWith(key)
-      )
-
-      let optionsCount = filteredOptions.filter((option) =>
-        option.option.toLowerCase().startsWith(key)
-      ).length
-
-      if (optionIndex > optionsCount) {
-        optionsCount += optionIndex
-      }
-
-      const currentSelectedOptionIndex = filteredOptions?.findIndex((option) => option.selected)
-      const newOptions = [...filteredOptions]
-
-      if (isKeyUp) {
-        optionIndex = currentSelectedOptionIndex - 1
-      }
-
-      if (isKeyDown) {
-        optionIndex = currentSelectedOptionIndex + 1
-      }
-
-      if (optionIndex > -1 && isArrowKey) {
-        if (isKeyUp) {
-          if (count === -1) {
-            count = optionIndex
-          } else if (count > 0) {
-            count -= 1
-          }
-        } else if (isKeyDown) {
-          if (count === -1) {
-            count = optionIndex
-          } else if (count < filteredOptions.length - 1) {
-            count += 1
-          }
-        }
-
-        if (currentSelectedOptionIndex > -1) {
-          newOptions[currentSelectedOptionIndex].selected = false
-        }
-
-        newOptions[count].selected = true
-
-        const { option, value } = newOptions[count]
-
-        selectOption(option, value, true)
-      }
+    if (onSelectionChange) {
+      onSelectionChange(option.value)
     }
   }
 
-  const handleClickOutside = (e: any) => {
-    if (node.current.contains(e.target)) {
-      return
-    }
-
-    setOpen(false)
-  }
-
-  const handleOpenOnClick = () => setOpen(!open)
-
-  const handleSearch = (e: any) => {
-    const text = e.target.value
-
-    const newFilteredOptions = options.filter((option) =>
-      option.option.toLowerCase().includes(text.toLowerCase())
-    )
-
-    setFilteredOptions(newFilteredOptions)
-  }
-
-  if (!options) {
-    return null
-  }
-
-  const renderList = () => {
-    const style: any = { display: open ? 'block' : 'none' }
-
-    if (size === 'xSmall' || size === 'small') {
-      style.maxHeight = '120px'
-    }
-
-    if (size === 'medium') {
-      style.maxHeight = '150px'
-    }
-
-    if (size === 'large') {
-      style.maxHeight = '300px'
-    }
-
-    if (size === 'xLarge') {
-      style.maxHeight = '600px'
-    }
-
-    return (
-      <ul className={styles.ul} style={style}>
-        {searchable && (
-          <input
-            autoFocus
-            className={styles.input}
-            ref={inputReference}
-            type="text"
-            placeholder={searchLabel}
-            onChange={handleSearch}
-          />
-        )}
-        {filteredOptions.map(({ option, value, selected }: any) => {
-          if (selected && selectedOption.value === '') {
-            selectOption(option, value)
-          }
-
-          const style = {
-            background: 'transparent',
-            color: '#151515'
-          }
-
-          if (selectedOption.value === value) {
-            style.background = `var(--palette-${color}-common-main)`
-            style.color = `var(--palette-${color}-common-contrastText)`
-          }
-
-          return (
-            <li
-              key={`option-${value}`}
-              onClick={(): void => selectOption(option, value)}
-              style={style}
-              className={styles.li}
-            >
-              {option}
-            </li>
-          )
-        })}
-      </ul>
-    )
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(event.target.value)
   }
 
   useEffect(() => {
-    if (inputReference.current) {
-      inputReference?.current?.focus()
-    }
-
-    if (open && typeof window !== 'undefined') {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else if (typeof window !== 'undefined') {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-
-    if (open && typeof window !== 'undefined') {
-      node.current.addEventListener('keydown', handleKeyDown)
-    }
-
-    return () => {
-      if (typeof window !== 'undefined') {
-        document.removeEventListener('mousedown', handleClickOutside)
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
       }
     }
-  }, [open])
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
-    <div ref={node} style={{ marginTop: '5px', marginBottom: '20px' }}>
-      <select data-component="Select" className={styles.select} {...selectProps}>
-        <>
-          <a onClick={handleOpenOnClick} role="button" tabIndex={0} className={styles.a}>
-            <div>{selectedOption.option || label}</div>
-            <div>
-              &nbsp;
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 10l5 5 5-5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-          </a>
-          {renderList()}
-        </>
-      </select>
+    <div className="relative" ref={dropdownRef}>
+      <button
+        className="bg-gray-200 text-gray-700 border border-gray-400 px-4 py-2 rounded-md w-full text-left"
+        onClick={toggleDropdown}
+      >
+        {selectedOption ? selectedOption.label : placeholder}
+      </button>
+      {isOpen && (
+        <div className="absolute bg-white border border-gray-400 mt-1 rounded-md w-full z-10">
+          <input
+            className="px-4 py-2 w-full"
+            placeholder="Search..."
+            value={filter}
+            onChange={handleFilterChange}
+          />
+          <ul>
+            {filteredOptions.map((option) => (
+              <li
+                key={option.value}
+                className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${
+                  selectedOption?.value === option.value ? 'bg-gray-300' : ''
+                }`}
+                onClick={() => selectOption(option)}
+              >
+                {option.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
