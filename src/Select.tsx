@@ -77,7 +77,10 @@ const SelectComponent: FC<SelectComponentProps> = ({
       {label && <label className={styles.label}>{label}</label>}{' '}
       <div ref={dropdownRef} className="mt-1">
         <button
-          className={cx.join(styles.button, selectedOption ? 'text-black dark:text-white' : '')}
+          className={cx.join(
+            styles.button,
+            selectedOption ? 'text-black dark:text-white' : 'text-gray-300'
+          )}
           onClick={toggleDropdown}
           style={{ height: '42px' }}
         >
@@ -99,7 +102,7 @@ const SelectComponent: FC<SelectComponentProps> = ({
                 <li
                   key={option.value}
                   className={`${styles.li} ${
-                    selectedOption?.value === option.value ? 'bg-gray-300 dark:bg-gray-600' : ''
+                    selectedOption?.value === option.value ? 'bg-gray-300 dark:bg-gray-900' : ''
                   }`}
                   onClick={() => selectOption(option)}
                 >
