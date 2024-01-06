@@ -15,6 +15,7 @@ type SelectComponentProps = {
   onSelectionChange?: (value: string) => void
   style?: CSSProperties
   ellipsisLength?: number
+  searchable?: boolean
 }
 
 const SelectComponent: FC<SelectComponentProps> = ({
@@ -23,7 +24,8 @@ const SelectComponent: FC<SelectComponentProps> = ({
   placeholder = 'Select option',
   onSelectionChange,
   style = {},
-  ellipsisLength = 14
+  ellipsisLength = 14,
+  searchable = false
 }) => {
   const findSelectedOption = options.find((option) => option.selected)
   const [isOpen, setIsOpen] = useState(false)
@@ -73,18 +75,24 @@ const SelectComponent: FC<SelectComponentProps> = ({
     <div data-component="Select" className="relative" style={style}>
       {label && <label className={styles.label}>{label}</label>}{' '}
       <div ref={dropdownRef} className="mt-1">
-        <button className={styles.button} onClick={toggleDropdown} style={{ height: '42px' }}>
+        <button
+          className={styles.button}
+          onClick={toggleDropdown}
+          style={{ height: '42px', color: selectedOption ? 'black' : undefined }}
+        >
           {selectedOption ? selectedOption.label : placeholder}
         </button>
         {isOpen && (
           <div className={styles.openDiv}>
             {' '}
-            <input
-              className={styles.input}
-              placeholder="Search..."
-              value={filter}
-              onChange={handleFilterChange}
-            />
+            {searchable && (
+              <input
+                className={styles.input}
+                placeholder="Search..."
+                value={filter}
+                onChange={handleFilterChange}
+              />
+            )}
             <ul>
               {filteredOptions.map((option) => (
                 <li
