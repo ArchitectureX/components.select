@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, FC, CSSProperties } from 'react'
 
+import { styles } from './styles'
+
 type Option = {
   label: string
   value: string
@@ -33,7 +35,9 @@ const SelectComponent: FC<SelectComponentProps> = ({
   const toggleDropdown = () => setIsOpen(!isOpen)
 
   const selectOption = (option: Option) => {
-    setSelectedOption(option)
+    const truncatedLabel = truncateText(option.label, 20)
+
+    setSelectedOption({ ...option, label: truncatedLabel })
     setIsOpen(false)
 
     if (onSelectionChange) {
@@ -59,25 +63,22 @@ const SelectComponent: FC<SelectComponentProps> = ({
     }
   }, [])
 
+  const truncateText = (text: string, maxLength: number): string => {
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text
+  }
+
   return (
     <div data-component="Select" className="relative" style={style}>
-      {label && (
-        <label className="block text-gray-700 text-sm font-bold mb-2 text-left dark:text-gray-300">
-          {label}
-        </label>
-      )}{' '}
+      {label && <label className={styles.label}>{label}</label>}{' '}
       <div ref={dropdownRef} className="mt-1">
-        <button
-          className="bg-gray-200 text-black border border-gray-300 px-4 p-2 rounded w-full text-left text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600" // Dark mode styles
-          onClick={toggleDropdown}
-        >
+        <button className={styles.button} onClick={toggleDropdown} style={{ height: '42px' }}>
           {selectedOption ? selectedOption.label : placeholder}
         </button>
         {isOpen && (
-          <div className="absolute bg-white border border-gray-400 mt-1 rounded w-full z-10 dark:bg-gray-800 dark:border-gray-600">
+          <div className={styles.openDiv}>
             {' '}
             <input
-              className="px-4 py-2 w-full text-sm dark:bg-gray-700 dark:text-gray-300"
+              className={styles.input}
               placeholder="Search..."
               value={filter}
               onChange={handleFilterChange}
@@ -86,9 +87,9 @@ const SelectComponent: FC<SelectComponentProps> = ({
               {filteredOptions.map((option) => (
                 <li
                   key={option.value}
-                  className={`px-4 py-2 hover:bg-gray-100 cursor-pointer text-left text-sm dark:hover:bg-gray-600 ${
+                  className={`${styles.li} ${
                     selectedOption?.value === option.value ? 'bg-gray-300 dark:bg-gray-600' : ''
-                  }`} // Dark mode styles
+                  }`}
                   onClick={() => selectOption(option)}
                 >
                   {option.label}

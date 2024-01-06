@@ -1,11 +1,13 @@
 import cx from '@architecturex/utils.cx'
 
 export const styles = {
-  ul: 'bg-white border border-black rounded-md list-none m-0 overflow-auto p-0 absolute top-0 w-[130%] z-10',
-  li: 'border-b border-shuttleGray text-[FontSize.regular] p-2.5 pl-5 last:border-b-0 hover:bg-whiteLilac hover:text-outerSpace',
-  input: 'border-none border-b border-black py-1 px-2 h-8 w-full',
-  select: 'min-w-[220px] relative touch-none select-none w-fit',
-  a: 'rounded-md flex py-2.5 px-5 text-decoration-none w-fit'
+  label: 'block text-gray-700 text-sm font-bold mb-2 text-left dark:text-gray-300',
+  button:
+    'bg-gray-200 text-gray-300 border border-gray-300 px-4 p-2 rounded w-full text-left text-sm overflow-hidden whitespace-nowrap text-overflow-ellipsis dark:bg-gray-700 dark:border-gray-600',
+  openDiv:
+    'absolute bg-white border border-gray-400 mt-1 rounded w-full z-10 dark:bg-gray-800 dark:border-gray-600',
+  input: 'px-4 py-2 w-full text-sm dark:bg-gray-700 dark:text-gray-300',
+  li: 'px-4 py-2 hover:bg-gray-100 cursor-pointer text-left text-gray-600 text-sm dark:text-gray-300 dark:hover:bg-gray-600'
 }
 
 export const tailwindClasses = cx.extract(styles)
