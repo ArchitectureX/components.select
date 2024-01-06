@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, FC, CSSProperties } from 'react'
+import cx from '@architecturex/utils.cx'
 
 import { styles } from './styles'
 
@@ -76,9 +77,9 @@ const SelectComponent: FC<SelectComponentProps> = ({
       {label && <label className={styles.label}>{label}</label>}{' '}
       <div ref={dropdownRef} className="mt-1">
         <button
-          className={styles.button}
+          className={cx.join(styles.button, selectedOption ? 'text-black dark:text-white' : '')}
           onClick={toggleDropdown}
-          style={{ height: '42px', color: selectedOption ? 'black' : undefined }}
+          style={{ height: '42px' }}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </button>
